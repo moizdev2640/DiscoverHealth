@@ -1,7 +1,18 @@
 const Database = require("better-sqlite3");
 const path = require("path");
+const fs = require("fs");
+const os = require("os");
 
-const db = new Database(path.resolve(__dirname, "discoverhealth.db"));
+// Use /tmp for Vercel, or project directory for local development
+let dbPath;
+if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+  const tmpDir = process.env.VERCEL_TMP || "/tmp";
+  dbPath = path.join(tmpDir, "discoverhealth.db");
+} else {
+  dbPath = path.resolve(__dirname, "discoverhealth.db");
+}
+
+const db = new Database(dbPath);
 
 // Create tables if they do not exist
 const createTables = () => {
